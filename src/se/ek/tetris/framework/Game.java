@@ -27,6 +27,7 @@ public final class Game extends Canvas implements Runnable {
 	private Level level;
 
 	public Game() {
+		
 		handler = new Handler();
 		this.addKeyListener(new KeyInput(handler));
 		new Window(WIDTH, HEIGHT, "Tetris", this);
@@ -39,6 +40,7 @@ public final class Game extends Canvas implements Runnable {
 	}
 
 	private void init() {
+		
 		board = new Board(handler, level);
 	}
 
@@ -49,6 +51,7 @@ public final class Game extends Canvas implements Runnable {
 	}
 
 	public synchronized void stop() {
+		
 		try {
 			thread.join();
 			running = false;
@@ -59,6 +62,7 @@ public final class Game extends Canvas implements Runnable {
 
 	@Override
 	public void run() {
+		
 		init();
 		this.requestFocus();
 		long lastTime = System.nanoTime();
@@ -80,12 +84,13 @@ public final class Game extends Canvas implements Runnable {
 	}
 
 	private void tick() {
+		
 		handler.tick();
 		board.tick();
 	}
 
 	private void render() {
-
+		
 		BufferStrategy bs = this.getBufferStrategy();
 		if (bs == null) {
 			this.createBufferStrategy(3);
@@ -106,6 +111,7 @@ public final class Game extends Canvas implements Runnable {
 	}
 
 	public static int[][] cloneArray(int[][] array) {
+		
 		int[][] newArray = new int[4][2];
 		for (int i = 0; i < array.length; i++) {
 			for (int j = 0; j < array[0].length; j++) {
@@ -116,6 +122,7 @@ public final class Game extends Canvas implements Runnable {
 	}
 
 	public static float clamp(float val, float min, float max) {
+		
 		if (val <= min) {
 			return min;
 		}

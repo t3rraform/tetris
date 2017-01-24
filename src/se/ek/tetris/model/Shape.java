@@ -16,6 +16,7 @@ public final class Shape extends GameObject {
 	private boolean isActive = true;
 	private boolean spawnNew = false;
 	private boolean gameOver = false;
+	private boolean dropped = false;
 	private double baseInterval = Level.getBaseInterval();
 	private double interval = baseInterval;
 	private double timer = 0;
@@ -24,16 +25,23 @@ public final class Shape extends GameObject {
 
 	private int[][] selectedShape;
 	private Color selectedColor;
-
+	
+	private int[][] board = Board.getBoard();
+	private int centerX;
+	private int centerY;
+	
 	private double lockTime = 0;
 	private double maxLockTime = Level.getMaxLockTime();
 	private boolean rotatable;
+
 
 	public Shape(float x, float y, int[][] shape, Color color, ID id, Spawn spawn, Handler handler, boolean rotatable) {
 		super(x, y, id);
 		this.spawn = spawn;
 		this.handler = handler;
 		this.selectedShape = shape;
+		this.centerX = selectedShape[1][0];
+		this.centerY = selectedShape[1][1];;
 		this.selectedColor = color;
 		this.rotatable = rotatable;
 		velY = 20;
@@ -55,7 +63,6 @@ public final class Shape extends GameObject {
 			}
 
 			if (!gameOver) {
-
 				if (timer >= interval) {
 					y += velY;
 					timer = 0;
@@ -80,13 +87,12 @@ public final class Shape extends GameObject {
 
 		for (int i = 0; i < selectedShape.length; i++) {
 
-			int pieceX = (int) (selectedShape[i][0] * SQUARE_SIZE + nextMoveX);
-			int pieceY = (int) (selectedShape[i][1] * SQUARE_SIZE + y);
+			int pieceX = (int) (selectedShape[i][0] + nextMoveX / SQUARE_SIZE);
+			int pieceY = (int) (selectedShape[i][1] + y / SQUARE_SIZE);
 
-			if (pieceX < 0 || pieceX > Board.GRID_WIDTH - SQUARE_SIZE || pieceY < 0
-					|| pieceY > Board.GRID_HEIGHT - SQUARE_SIZE) {
+			if (pieceX < 0 || pieceX > Board.COLS - 1 || pieceY < 0 || pieceY > Board.ROWS - 1) {
 				return false;
-			} else if (board[pieceX / SQUARE_SIZE][pieceY / SQUARE_SIZE] == 1) {
+			} else if (board[pieceX][pieceY] == 1) {
 				return false;
 			}
 
@@ -113,9 +119,6 @@ public final class Shape extends GameObject {
 
 		if (canRotate && rotatable) {
 
-			int centerX = selectedShape[1][0];
-			int centerY = selectedShape[1][1];
-
 			for (int i = 0; i < selectedShape.length; i++) {
 				int pieceX = selectedShape[i][0] - centerX;
 				int pieceY = selectedShape[i][1] - centerY;
@@ -130,11 +133,6 @@ public final class Shape extends GameObject {
 	}
 
 	private boolean wallKick(int tempX, double angle) {
-
-		int[][] board = Board.getBoard();
-
-		int centerX = selectedShape[1][0];
-		int centerY = selectedShape[1][1];
 
 		for (int i = 0; i < selectedShape.length; i++) {
 			int pieceX = selectedShape[i][0] - centerX;
@@ -153,7 +151,6 @@ public final class Shape extends GameObject {
 				return false;
 			}
 		}
-
 		return true;
 	}
 
@@ -161,17 +158,12 @@ public final class Shape extends GameObject {
 
 		int stepsOutOfBoundaries = 0;
 
-		int centerX = selectedShape[1][0];
-		int centerY = selectedShape[1][1];
-
 		for (int i = 0; i < selectedShape.length; i++) {
 			int pieceX = selectedShape[i][0] - centerX;
 			int pieceY = selectedShape[i][1] - centerY;
 
 			int newX = (int) Math.round(pieceX * Math.cos(angle) - pieceY * Math.sin(angle) + centerX);
-			int newY = (int) Math.round(pieceX * Math.sin(angle) + pieceY * Math.cos(angle) + centerY);
 			int newXCord = (int) (newX + x / SQUARE_SIZE);
-			int newYCord = (int) (newY + y / SQUARE_SIZE);
 
 			if (newXCord < 0) {
 				stepsOutOfBoundaries += SQUARE_SIZE;
@@ -186,9 +178,6 @@ public final class Shape extends GameObject {
 
 	private boolean canRotateWithinBounds(double angle) {
 
-		int centerX = selectedShape[1][0];
-		int centerY = selectedShape[1][1];
-
 		for (int i = 0; i < selectedShape.length; i++) {
 			int pieceX = selectedShape[i][0] - centerX;
 			int pieceY = selectedShape[i][1] - centerY;
@@ -199,8 +188,7 @@ public final class Shape extends GameObject {
 			int newYCord = (int) (newY + y / SQUARE_SIZE);
 
 			// Will only return true if within boundaries and no block collision
-			if (newXCord < 0 || newXCord > (Board.GRID_WIDTH - SQUARE_SIZE) / SQUARE_SIZE || newYCord < 0
-					|| newYCord > (Board.GRID_HEIGHT - SQUARE_SIZE) / SQUARE_SIZE) {
+			if (newXCord < 0 || newXCord > Board.COLS - 1 || newYCord < 0 || newYCord > (Board.ROWS - 1)) {
 				return false;
 			}
 		}
@@ -210,10 +198,7 @@ public final class Shape extends GameObject {
 
 	private boolean canRotateWithinShapes(double angle) {
 
-		int[][] board = Board.getBoard();
 
-		int centerX = selectedShape[1][0];
-		int centerY = selectedShape[1][1];
 
 		for (int i = 0; i < selectedShape.length; i++) {
 			int pieceX = selectedShape[i][0] - centerX;
@@ -233,9 +218,7 @@ public final class Shape extends GameObject {
 	}
 
 	private boolean checkCollision() {
-
-		int[][] board = Board.getBoard();
-
+		
 		for (int i = 0; i < selectedShape.length; i++) {
 			int pieceX = (int) (selectedShape[i][0] + x / SQUARE_SIZE);
 			int pieceY = (int) (selectedShape[i][1] + y / SQUARE_SIZE);
@@ -250,7 +233,7 @@ public final class Shape extends GameObject {
 	private void lockShape() {
 
 		velY = 0;
-		int[][] board = Board.getBoard();
+
 		for (int i = 0; i < selectedShape.length; i++) {
 			int pieceXBoard = (int) x / SQUARE_SIZE + selectedShape[i][0];
 			int pieceYBoard = (int) y / SQUARE_SIZE + selectedShape[i][1];
@@ -349,5 +332,14 @@ public final class Shape extends GameObject {
 	public void setMAX_LOCKTIME(int maxLockTime) {
 		this.maxLockTime = maxLockTime;
 	}
+
+	public boolean isDropped() {
+		return dropped;
+	}
+
+	public void setDropped(boolean dropped) {
+		this.dropped = dropped;
+	}
 	
+
 }

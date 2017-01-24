@@ -23,11 +23,12 @@ public final class KeyInput extends KeyAdapter {
             if(tempObject.getId() == ID.Shape && tempObject.isActive()){
             	if(key == KeyEvent.VK_LEFT) tempObject.move(-20);
     			if(key == KeyEvent.VK_RIGHT) tempObject.move(20);
-    			if(key == KeyEvent.VK_DOWN) tempObject.setInterval(tempObject.getBaseInterval() * 0.5);
+    			if(key == KeyEvent.VK_DOWN && !tempObject.isDropped()) tempObject.setInterval(tempObject.getBaseInterval() * 0.5);
     			if(key == KeyEvent.VK_X) tempObject.rotate(Math.PI / 2);
     			if(key == KeyEvent.VK_Z) tempObject.rotate(Math.PI / 2 * -1);
     			if(key == KeyEvent.VK_SHIFT) tempObject.holdShape();
     			if(key == KeyEvent.VK_SPACE){
+    				tempObject.setDropped(true);
     				tempObject.setInterval(0); 
     				tempObject.setLockTime(tempObject.getMaxLockTime());
     			}
@@ -44,7 +45,7 @@ public final class KeyInput extends KeyAdapter {
 			if(tempObject.getId() == ID.Shape && tempObject.isActive()){
 				if(key == KeyEvent.VK_LEFT) tempObject.setVelX(0);
 				if(key == KeyEvent.VK_RIGHT) tempObject.setVelX(0);
-				if(key == KeyEvent.VK_DOWN) tempObject.setInterval(tempObject.getBaseInterval());
+				if(key == KeyEvent.VK_DOWN && !tempObject.isDropped()) tempObject.setInterval(tempObject.getBaseInterval());
 			}
 		}
 	}
