@@ -1,6 +1,6 @@
 <h1>Tetris</h1>
 My go at the game Tetris created with Java Swing, personally one of my favorite games.<br>
-Runnable jar in repository (Requires Java to be installed).
+Runnable jar included in repository (Requires Java to be installed).
 
 <h4>The game's features:</h4>
 Spawning all the classic Tetris blocks, moving and rotating them, clearing lines, getting score and leveling up.
