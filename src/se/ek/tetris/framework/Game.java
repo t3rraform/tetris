@@ -16,7 +16,7 @@ import se.ek.tetris.window.Window;
 public final class Game extends Canvas implements Runnable {
 
 	private static final long serialVersionUID = 4512912530380851212L;
-	public static final int WIDTH = 350, HEIGHT = 430;
+	public static final int WIDTH = 350, HEIGHT = 435;
 	public static final int SQUARE_SIZE = 20;
 	private Thread thread;
 	private boolean running = false;
